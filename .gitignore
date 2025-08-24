@@ -4,15 +4,29 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
-# Dependências
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Diretório de dependências do Node
 node_modules
 
-# Arquivos de Build e Plataformas (O Appflow vai gerar isso)
-www
-dist
-android
-ios
+# Arquivos de build do Capacitor (serão gerados na nuvem)
+android/
+ios/
 
-# Arquivos de sistema
-.DS_Store
+# Arquivos de IDE e editores
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Arquivos de cache e temporários diversos
+.cache
+.tmp
+.eslintcache
