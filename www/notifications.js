@@ -1,6 +1,17 @@
-// Pega o plugin direto da instância global do Capacitor
-const { LocalNotifications } = window.Capacitor.Plugins;
+// --- CÓDIGO DE DEBUG - REMOVER DEPOIS ---
+(function() {
+  var oldLog = console.log;
+  console.log = function (message) {
+      window.Capacitor.Plugins.Modals.alert({
+          title: 'Debug Log',
+          message: JSON.stringify(message)
+      });
+      oldLog.apply(console, arguments);
+  };
+})();
+// --- FIM DO CÓDIGO DE DEBUG ---
 
+const { LocalNotifications } = window.Capacitor.Plugins;
 // --- BANCO DE MENSAGENS ---
 // 4 mensagens únicas para cada dia da semana (Total: 28)
 const mensagens = {
