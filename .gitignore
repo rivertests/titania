@@ -13,9 +13,7 @@ Thumbs.db
 # Diretório de dependências do Node
 node_modules
 
-# Arquivos de build do Capacitor (serão gerados na nuvem)
-android/
-ios/
+
 
 # Arquivos de IDE e editores
 .idea/
