@@ -6,7 +6,6 @@ import WebKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var bridge: CAPBridge?
 
     func application(
         _ application: UIApplication,
@@ -15,9 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Cria a janela principal
         self.window = UIWindow(frame: UIScreen.main.bounds)
 
-        // Inicializa o Capacitor Bridge
+        // Inicializa o Capacitor BridgeViewController
         let bridgeViewController = CAPBridgeViewController()
-        self.bridge = bridgeViewController.bridge
 
         // Define delegate de navegação para capturar falhas
         bridgeViewController.bridge?.webView?.navigationDelegate = self
