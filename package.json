@@ -12,9 +12,11 @@
   "type": "commonjs",
   "dependencies": {
     "@capacitor/android": "^7.4.3",
+    "@capacitor/browser": "^7.0.2",
     "@capacitor/core": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
     "@capacitor/local-notifications": "^7.0.2",
+    "@capacitor/network": "^7.0.2",
     "@capawesome/capacitor-android-edge-to-edge-support": "^7.2.3"
   },
   "devDependencies": {

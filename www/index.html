@@ -1,10 +1,55 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Inteligência Titan</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Titan IA</title>
+  <style>
+    /* Fundo preto para evitar qualquer flash branco */
+    body { background-color: #101212; }
+    /* Remove o hover azul dos botões */
+    * { -webkit-tap-highlight-color: transparent !important; }
+  </style>
+  <!-- Carrega o core do Capacitor para termos acesso aos plugins -->
+  <script src="capacitor.js"></script>
 </head>
 <body>
-  <script type="module" src="notifications.js"></script>
+  <!-- Nosso script principal agora fica aqui -->
+  <script>
+    // CORREÇÃO: "async function" e o nome correto da função
+    async function initializeApp() {
+      // Espera o Capacitor estar 100% pronto (usando um método que sempre existe)
+      await window.Capacitor.Plugins.App.getLaunchUrl();
+
+      const { Network, App, Browser } = window.Capacitor.Plugins;
+
+      // 1. Agenda as notificações (chama o outro script)
+      const notificationScript = document.createElement('script');
+      notificationScript.src = 'notifications.js';
+      document.body.appendChild(notificationScript);
+
+      // 2. Lógica de links externos (o "Guarda de Trânsito")
+      App.addListener('appUrlOpen', (event) => {
+        const url = event.url;
+        // Verifica se é um link externo que queremos abrir no navegador
+        if (url.includes('kirvano.com') || url.includes('aplicativotitan.com')) {
+          Browser.open({ url: url });
+        }
+      });
+      
+      // 3. Lógica de carregamento Online vs. Offline
+      const status = await Network.getStatus();
+      if (status.connected) {
+        // Se online, carrega o site principal
+        window.location.replace('https://inteligenciatitan.com.br');
+      } else {
+        // Se offline, carrega a página local
+        window.location.replace('./offline.html');
+      }
+    }
+
+    // Chama a função principal para iniciar tudo
+    initializeApp();
+  </script>
 </body>
 </html>
