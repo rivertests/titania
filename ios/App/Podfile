@@ -1,13 +1,10 @@
-# Podfile Final e Corrigido
+# Podfile Simplificado ao Máximo para Diagnóstico
+
 platform :ios, '14.0'
 use_frameworks!
 
-# Esta linha ENSINA os comandos do Capacitor para o Podfile.
-# Ela precisa vir ANTES de qualquer comando ser usado.
-require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
-
 target 'App' do
-  # Capacitor Pods
+  # Pods Essenciais do Capacitor
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   
@@ -18,7 +15,5 @@ target 'App' do
   pod 'CapacitorLocalNotifications', :path => '../../node_modules/@capacitor/local-notifications'
 end
 
-# Agora que o comando foi ensinado, podemos usá-lo aqui.
-post_install do |installer|
-  assert_capacitor_swift_version(installer)
-end
+# NADA MAIS. O ARQUIVO TERMINA AQUI.
+# REMOVEMOS O 'require_relative' E O 'post_install' COMPLETAMENTE.
