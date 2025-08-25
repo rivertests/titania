@@ -3,10 +3,9 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'br.com.inteligenciatitan.app',
   appName: 'Titan IA',
-  webDir: 'www', // mantém, mesmo que você use server.url
+  webDir: 'public',   // <-- troca aqui
   server: {
-    url: 'https://inteligenciatitan.com.br',
-    cleartext: false, // garante https, pode omitir se quiser
+    url: 'https://inteligenciatitan.com.br'
   },
   plugins: {
     SplashScreen: {

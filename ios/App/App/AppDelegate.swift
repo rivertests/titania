@@ -47,9 +47,9 @@ extension AppDelegate: WKNavigationDelegate {
     }
 
     private func loadOfflinePage(_ webView: WKWebView) {
-        if let path = Bundle.main.path(forResource: "offline", ofType: "html", inDirectory: "public") {
-            let url = URL(fileURLWithPath: path)
-            webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-        }
+    if let url = Bundle.main.url(forResource: "offline", withExtension: "html", subdirectory: "public") {
+        webView.loadFileURL(url, allowingReadAccessTo: Bundle.main.bundleURL)
     }
+}
+
 }
