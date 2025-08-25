@@ -1,21 +1,24 @@
-# Podfile Padrão e Corrigido do Capacitor
-platform :ios, '14.0'  # <-- ESTA É A LINHA QUE RESOLVE O ERRO DE BUILD
+# Podfile Final e Corrigido
+platform :ios, '14.0'
 use_frameworks!
+
+# Esta linha ENSINA os comandos do Capacitor para o Podfile.
+# Ela precisa vir ANTES de qualquer comando ser usado.
+require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 
 target 'App' do
   # Capacitor Pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   
-  # Seus Plugins (adicione os que você usa)
+  # Seus Plugins
   pod 'CapacitorBrowser', :path => '../../node_modules/@capacitor/browser'
   pod 'CapacitorNetwork', :path => '../../node_modules/@capacitor/network'
-  # Se você não usa Dialog e LocalNotifications, pode remover as duas linhas abaixo
   pod 'CapacitorDialog', :path => '../../node_modules/@capacitor/dialog'
   pod 'CapacitorLocalNotifications', :path => '../../node_modules/@capacitor/local-notifications'
 end
 
+# Agora que o comando foi ensinado, podemos usá-lo aqui.
 post_install do |installer|
-  require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
   assert_capacitor_swift_version(installer)
 end
