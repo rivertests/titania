@@ -17,17 +17,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
 
-        // Inicializa o Capacitor Bridge
+        // --- SUA LÓGICA DE INICIALIZAÇÃO ORIGINAL ---
         self.bridge = CAPBridgeViewController()
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = self.bridge
         self.window?.makeKeyAndVisible()
+        // --- FIM DA LÓGICA ORIGINAL ---
 
         // Pega a WKWebView criada pelo Capacitor
         guard let webView = bridge?.webView else {
             return true
         }
         
+        // ** NOSSA LÓGICA ADICIONADA DE FORMA SEGURA **
+
         // 1. Remove o flash branco
         webView.isOpaque = false
         webView.backgroundColor = UIColor.clear
@@ -59,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    // Funções padrão do Capacitor
+    // --- SUAS FUNÇÕES ORIGINAIS DO CAPACITOR ---
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
@@ -68,24 +71,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
     
-    // Função auxiliar para carregar a página offline
+    // --- NOSSAS FUNÇÕES AUXILIARES ---
     func loadOfflinePage(_ webView: WKWebView) {
+        // Confirme que o caminho está correto: seu 'www' ou 'public' vira 'public' aqui.
         if let offlineURL = Bundle.main.url(forResource: "offline", withExtension: "html", subdirectory: "public/offline") {
              webView.loadFileURL(offlineURL, allowingReadAccessTo: offlineURL.deletingLastPathComponent().deletingLastPathComponent())
         }
     }
 }
 
-// MARK: - WKNavigationDelegate (Guarda de Trânsito e Funções Auxiliares)
+// MARK: - WKNavigationDelegate (Guarda de Trânsito e Funções de Fallback)
 extension AppDelegate: WKNavigationDelegate {
 
-    // Decide o que fazer com os cliques
+    // Decide o que fazer com os cliques em links
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let url = navigationAction.request.URL else {
             decisionHandler(.allow)
             return
         }
-
         let urlString = url.absoluteString
 
         // Se for um link externo, abre no navegador Safari
@@ -106,12 +109,19 @@ extension AppDelegate: WKNavigationDelegate {
         webView.evaluateJavaScript(js, completionHandler: nil)
     }
 
-    // Se qualquer navegação falhar (mesmo com internet), carrega a página offline como fallback
+    // Se qualquer navegação falhar (mesmo com internet), carrega a página offline
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        loadOfflinePage(webView)
+        // Evita carregar a página offline para erros de "frame load interrupted" que são normais
+        let nsError = error as NSError
+        if nsError.code != NSURLErrorCancelled {
+            loadOfflinePage(webView)
+        }
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        loadOfflinePage(webView)
+        let nsError = error as NSError
+        if nsError.code != NSURLErrorCancelled {
+            loadOfflinePage(webView)
+        }
     }
 }
