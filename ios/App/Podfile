@@ -1,5 +1,5 @@
-# Podfile Padrão do Capacitor
-platform :ios, '13.0'
+# Podfile Padrão e Corrigido do Capacitor
+platform :ios, '14.0'  # <-- ESTA É A LINHA QUE RESOLVE O ERRO DE BUILD
 use_frameworks!
 
 target 'App' do
@@ -7,7 +7,7 @@ target 'App' do
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   
-  # Seus Plugins
+  # Seus Plugins (adicione os que você usa)
   pod 'CapacitorBrowser', :path => '../../node_modules/@capacitor/browser'
   pod 'CapacitorNetwork', :path => '../../node_modules/@capacitor/network'
   # Se você não usa Dialog e LocalNotifications, pode remover as duas linhas abaixo

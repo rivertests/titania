@@ -3,10 +3,8 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'br.com.inteligenciatitan.app',
   appName: 'Titan IA',
-  webDir: 'www',   // <-- troca aqui
-  server: {
-    url: 'https://inteligenciatitan.com.br'
-  },
+  webDir: 'www',
+  // O BLOCO 'server' FOI REMOVIDO DAQUI
   plugins: {
     SplashScreen: {
       launchShowDuration: 3000,
@@ -17,6 +15,7 @@ const config: CapacitorConfig = {
       splashImmersive: true,
     }
   }
+  // O BLOCO 'ios' FOI REMOVIDO DAQUI
 };
 
 export default config;
