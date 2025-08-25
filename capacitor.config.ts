@@ -3,17 +3,16 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'br.com.inteligenciatitan.app',
   appName: 'Titan IA',
-  webDir: 'www',
+  webDir: 'www', // mantém, mesmo que você use server.url
   server: {
     url: 'https://inteligenciatitan.com.br',
-    errorPath: 'public/offline.html'
+    cleartext: false, // garante https, pode omitir se quiser
   },
-  // Adiciona configurações explícitas da Splash Screen para garantir
   plugins: {
     SplashScreen: {
-      launchShowDuration: 3000, // Mostra por 3 segundos
+      launchShowDuration: 3000,
       launchAutoHide: true,
-      backgroundColor: "#101212", // Mesma cor de fundo
+      backgroundColor: "#101212",
       androidScaleType: "CENTER_CROP",
       splashFullScreen: true,
       splashImmersive: true,
