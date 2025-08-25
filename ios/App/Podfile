@@ -1,27 +1,21 @@
-require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
-
-platform :ios, '14.0'
+# Podfile Padrão do Capacitor
+platform :ios, '13.0'
 use_frameworks!
 
-# workaround to avoid Xcode caching of Pods that requires
-# Product -> Clean Build Folder after new Cordova plugins installed
-# Requires CocoaPods 1.6 or newer
-install! 'cocoapods', :disable_input_output_paths => true
-
-def capacitor_pods
+target 'App' do
+  # Capacitor Pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+  
+  # Seus Plugins
   pod 'CapacitorBrowser', :path => '../../node_modules/@capacitor/browser'
+  pod 'CapacitorNetwork', :path => '../../node_modules/@capacitor/network'
+  # Se você não usa Dialog e LocalNotifications, pode remover as duas linhas abaixo
   pod 'CapacitorDialog', :path => '../../node_modules/@capacitor/dialog'
   pod 'CapacitorLocalNotifications', :path => '../../node_modules/@capacitor/local-notifications'
-  pod 'CapacitorNetwork', :path => '../../node_modules/@capacitor/network'
-end
-
-target 'App' do
-  capacitor_pods
-  # Add your Pods here
 end
 
 post_install do |installer|
-  assertDeploymentTarget(installer)
+  require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
+  assert_capacitor_swift_version(installer)
 end
