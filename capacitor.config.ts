@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'br.com.inteligenciatitan.app',
   appName: 'Titan IA',
-  webDir: 'public',   // <-- troca aqui
+  webDir: 'www',   // <-- troca aqui
   server: {
     url: 'https://inteligenciatitan.com.br'
   },
