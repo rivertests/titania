@@ -1,53 +1,85 @@
 import UIKit
-import Capacitor // <-- A LINHA QUE FALTAVA E CORRIGE TUDO
-import Network
+import Capacitor
+import WebKit
+import Network // Importa o framework de rede
 
-class AppDelegate: CAPAppDelegate, WKNavigationDelegate {
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    var window: UIWindow?
+    var bridge: CAPBridgeViewController?
+    
+    // Cria o monitor de rede
     let monitor = NWPathMonitor()
 
-    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        guard let webView = self.bridge?.getWebView() else {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+
+        // Inicializa o Capacitor Bridge
+        self.bridge = CAPBridgeViewController()
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window?.rootViewController = self.bridge
+        self.window?.makeKeyAndVisible()
+
+        // Pega a WKWebView criada pelo Capacitor
+        guard let webView = bridge?.webView else {
             return true
         }
-
+        
         // 1. Remove o flash branco
         webView.isOpaque = false
         webView.backgroundColor = UIColor.clear
         webView.scrollView.backgroundColor = UIColor.clear
 
-        // 2. Define o "Guarda de Trânsito" de links
+        // 2. Define esta classe como o "Guarda de Trânsito" de links
         webView.navigationDelegate = self
-
+        
         // 3. Lógica de Carregamento Centralizada
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 if path.status == .satisfied {
                     // SE ONLINE: Carrega o site
-                    print("--> Conectado à internet. Carregando site...")
                     if let url = URL(string: "https://inteligenciatitan.com.br") {
                         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
                         webView.load(request)
                     }
                 } else {
                     // SE OFFLINE: Carrega o arquivo local
-                    print("--> Desconectado. Carregando página offline...")
-                    // O caminho correto para os assets do Capacitor
-                    if let offlineURL = Bundle.main.url(forResource: "offline", withExtension: "html", subdirectory: "public/offline") {
-                         webView.loadFileURL(offlineURL, allowingReadAccessTo: offlineURL.deletingLastPathComponent().deletingLastPathComponent())
-                    }
+                    self.loadOfflinePage(webView)
                 }
             }
         }
-
+        
         // Inicia o monitoramento da rede
         let queue = DispatchQueue(label: "NetworkMonitor")
         monitor.start(queue: queue)
-
+        
         return true
     }
 
-    // "Guarda de Trânsito" - decide o que fazer com os cliques
+    // Funções padrão do Capacitor
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    }
+    
+    // Função auxiliar para carregar a página offline
+    func loadOfflinePage(_ webView: WKWebView) {
+        if let offlineURL = Bundle.main.url(forResource: "offline", withExtension: "html", subdirectory: "public/offline") {
+             webView.loadFileURL(offlineURL, allowingReadAccessTo: offlineURL.deletingLastPathComponent().deletingLastPathComponent())
+        }
+    }
+}
+
+// MARK: - WKNavigationDelegate (Guarda de Trânsito e Funções Auxiliares)
+extension AppDelegate: WKNavigationDelegate {
+
+    // Decide o que fazer com os cliques
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let url = navigationAction.request.URL else {
             decisionHandler(.allow)
@@ -66,7 +98,7 @@ class AppDelegate: CAPAppDelegate, WKNavigationDelegate {
         }
     }
     
-    // Injeta CSS/JS quando a página termina de carregar
+    // Injeta CSS quando a página termina de carregar
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let js = "var style = document.createElement('style');" +
                  "style.innerHTML = '* { -webkit-tap-highlight-color: rgba(0,0,0,0) !important; }';" +
@@ -74,12 +106,12 @@ class AppDelegate: CAPAppDelegate, WKNavigationDelegate {
         webView.evaluateJavaScript(js, completionHandler: nil)
     }
 
-    // Funções padrão do Capacitor
-    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    // Se qualquer navegação falhar (mesmo com internet), carrega a página offline como fallback
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        loadOfflinePage(webView)
     }
 
-    override func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        loadOfflinePage(webView)
     }
 }
