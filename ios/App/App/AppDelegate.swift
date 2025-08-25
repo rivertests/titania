@@ -12,7 +12,7 @@ class AppDelegate: CAPAppDelegate, WKNavigationDelegate {
         guard let webView = self.bridge?.getWebView() else {
             return true
         }
-
+//
         // Configurações da WebView
         webView.isOpaque = false
         webView.backgroundColor = UIColor.clear
